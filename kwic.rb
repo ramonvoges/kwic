@@ -2,9 +2,9 @@
 
 # Returns the 7-gram of a given keyword in the given files.
 class Kwic
-  def initialize
+  def initialize(keyword)
     @index = []
-    @keyword = ARGV.shift
+    @keyword ||= keyword
     @lines = []
     @wordlist = []
   end
@@ -17,16 +17,17 @@ class Kwic
     end
   end
 
-  def split_lines_into_words
-    # @lines.each { |line| @wordlist << line.split }
-    @wordlist = @lines.flatten
+  def read_string(text)
+    @lines = text.split
   end
 
-  def search_keyword
-    @wordlist.each_index { |i| @index << i if @wordlist[i].match(@keyword) }
+  def process
+    split_lines_into_words
+    search_keyword
+    print_keyword_in_context
   end
 
-  def print_keywords_in_context
+  def print_keyword_in_context
     @index.each do |i|
       printf '# %*d: ', number_length, i + 1
       if i <= 4
@@ -35,12 +36,21 @@ class Kwic
       else
         printf '%*s', width_text_snippet, @wordlist[i - 4, 4].join(' ')
       end
-      printf '  %s  ', @wordlist[i]
+      # printf '  %s  ', @wordlist[i]
+      print "  #{@wordlist[i]}  "
       printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
     end
   end
 
   private
+
+  def split_lines_into_words
+    @wordlist = @lines.flatten
+  end
+
+  def search_keyword
+    @wordlist.each_index { |i| @index << i if @wordlist[i].match(@keyword) }
+  end
 
   def number_length
     @wordlist.length.to_s.length
@@ -51,8 +61,6 @@ class Kwic
   end
 end
 
-ngram = Kwic.new
+ngram = Kwic.new(ARGV.shift)
 ngram.read_file
-ngram.split_lines_into_words
-ngram.search_keyword
-ngram.print_keywords_in_context
+ngram.process
