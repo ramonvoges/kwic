@@ -26,6 +26,7 @@ module Kwic
       split_lines_into_words
       search_keyword
       print_keyword_in_context
+      print_summary
     end
 
     def print_keyword_in_context
@@ -43,7 +44,17 @@ module Kwic
       end
     end
 
+    def print_summary
+      puts
+      puts "The keyword '#{@keyword}' was found #{@index.length} times among #{@wordlist.length} words."
+      printf "Its absolute frequency is %.5f.\n", frequency
+    end
+
     private
+
+    def frequency
+      @index.length.to_f / @wordlist.length.to_f
+    end
 
     def split_lines_into_words
       @wordlist = @lines.flatten
