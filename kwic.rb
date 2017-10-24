@@ -50,7 +50,7 @@ module Kwic
     end
 
     def search_keyword
-      @wordlist.each_index { |i| @index << i if @wordlist[i].match(@keyword) }
+      @wordlist.each_index { |i| @index << i if @wordlist[i] =~ /#{@keyword}/i }
     end
 
     def number_length
