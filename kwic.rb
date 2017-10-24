@@ -10,15 +10,11 @@ class Kwic
   end
 
   def read_file
-    puts "You are looking for #{@keyword} in #{ARGV.length} file(s)."
+    puts "You are looking for '#{@keyword}' in #{ARGV.length} file(s)."
     puts
     ARGF.each do |line|
       @lines << line.split
-      # puts ARGF.file.lineno
     end
-    # print @lines
-    # puts @lines.join(' ')
-    # puts @keyword
   end
 
   def split_lines_into_words
@@ -31,14 +27,27 @@ class Kwic
   end
 
   def print_keywords_in_context
-    number_length = @wordlist.length.to_s.length
-    width_text_snippet = (80 - @keyword.length - number_length) / 2
     @index.each do |i|
       printf '# %*d: ', number_length, i + 1
-      printf '%*s', width_text_snippet, @wordlist[i - 4, 4].join(' ')
+      if i <= 4
+        start = 4 - i
+        printf '%*s', width_text_snippet, @wordlist[start, start + i].join(' ')
+      else
+        printf '%*s', width_text_snippet, @wordlist[i - 4, 4].join(' ')
+      end
       printf '  %s  ', @wordlist[i]
       printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
     end
+  end
+
+  private
+
+  def number_length
+    @wordlist.length.to_s.length
+  end
+
+  def width_text_snippet
+    (80 - @keyword.length - number_length) / 2
   end
 end
 
