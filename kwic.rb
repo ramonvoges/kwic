@@ -10,6 +10,8 @@ class Kwic
   end
 
   def read_file
+    puts "You are looking for #{@keyword} in #{ARGV.length} file(s)."
+    puts
     ARGF.each do |line|
       @lines << line.split
       # puts ARGF.file.lineno
@@ -19,24 +21,29 @@ class Kwic
     # puts @keyword
   end
 
-  def split_lines_into_word
+  def split_lines_into_words
     # @lines.each { |line| @wordlist << line.split }
     @wordlist = @lines.flatten
-    # print @wordlist
   end
 
   def search_keyword
     @wordlist.each_index { |i| @index << i if @wordlist[i].match(@keyword) }
-    # puts @index
   end
 
   def print_keywords_in_context
-    @index.each { |i| puts "# #{i}: #{@wordlist[i - 5, 11].join(' ')}" }
+    number_length = @wordlist.length.to_s.length
+    width_text_snippet = (80 - @keyword.length - number_length) / 2
+    @index.each do |i|
+      printf '# %*d: ', number_length, i + 1
+      printf '%*s', width_text_snippet, @wordlist[i - 4, 4].join(' ')
+      printf '  %s  ', @wordlist[i]
+      printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
+    end
   end
 end
 
 ngram = Kwic.new
 ngram.read_file
-ngram.split_lines_into_word
+ngram.split_lines_into_words
 ngram.search_keyword
 ngram.print_keywords_in_context
