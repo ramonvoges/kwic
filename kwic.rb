@@ -25,22 +25,24 @@ module Kwic
     def process
       split_lines_into_words
       search_keyword
-      print_keyword_in_context
-      print_summary
     end
 
     def print_keyword_in_context
       @index.each do |i|
         printf '# %*d: ', number_length, i + 1
-        if i <= 4
-          start = 4 - i
-          printf '%*s', width_text_snippet, @wordlist[start, start + i].join(' ')
+        if i < 4
+          printf '%*s', width_text_snippet, @wordlist[0, i].join(' ')
         else
           printf '%*s', width_text_snippet, @wordlist[i - 4, 4].join(' ')
         end
         # printf '  %s  ', @wordlist[i]
         print "  #{@wordlist[i]}  "
-        printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
+        if i + 4 >= @wordlist.length
+          last = @wordlist.length - i
+          printf "%-*s\n", width_text_snippet, @wordlist[i + 1, last].join(' ')
+        else
+          printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
+        end
       end
     end
 
@@ -77,3 +79,5 @@ end
 ngram = Kwic::Kwic.new(ARGV.shift)
 ngram.read_file
 ngram.process
+ngram.print_keyword_in_context
+ngram.print_summary
