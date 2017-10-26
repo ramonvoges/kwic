@@ -23,10 +23,6 @@ module Kwic
       end
     end
 
-    def count_words
-      @word_count += @wordlist.length
-    end
-
     def read_string(text)
       @lines = text.split
     end
@@ -34,10 +30,12 @@ module Kwic
     def print_start
       puts "You are looking for '#{@keyword}' in #{ARGV.length} file(s)."
       puts
+      printf "%-15s | %7s:%4s |\n", 'File', 'line', 'word'
+      # puts
     end
 
     def print_keyword_in_context(i)
-      printf '%-15.15s # %7d |', File.basename(ARGF.filename), @line_count
+      printf '%-15.15s | %7d:%4d |', File.basename(ARGF.filename), @line_count, i + 1
       print_before_keyword(i)
       print "  #{@wordlist[i]}  "
       print_after_keyword(i)
@@ -58,6 +56,10 @@ module Kwic
         @processing_file = ARGF.filename
         @line_count = 1
       end
+    end
+
+    def count_words
+      @word_count += @wordlist.length
     end
 
     def search_keyword
