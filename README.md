@@ -19,10 +19,13 @@ The actual class `Kwic` is included in a module with the same name so that it ca
 
 ```ruby
 ngram.read_file
+# Alternatively, you can use the method `read_string` which takes a string as an argument.
+# ngram.read_string(text)
 ngram.process
 ngram.print_keyword_in_context
 ngram.print_summary
 ```
+
 
 # Standalone
 
