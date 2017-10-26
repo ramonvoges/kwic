@@ -4,80 +4,99 @@ module Kwic
   # Returns the 7-gram of a given keyword in the given files.
   class Kwic
     def initialize(keyword)
-      @index = []
       @keyword ||= keyword
-      @lines = []
       @wordlist = []
+      @line_count = 0
+      @word_count = 0
+      @number_of_hits = 0
     end
 
-    def read_file
-      puts "You are looking for '#{@keyword}' in #{ARGV.length} file(s)."
-      puts
+    def read_stream
+      @processing_file = ARGF.filename
       ARGF.each do |line|
-        @lines << line.split
+        count_lines
+        @wordlist << line.split
+        @wordlist.flatten!
+        count_words
+        search_keyword
+        @wordlist.clear
       end
+    end
+
+    def count_words
+      @word_count += @wordlist.length
     end
 
     def read_string(text)
       @lines = text.split
     end
 
-    def process
-      split_lines_into_words
-      search_keyword
+    def print_start
+      puts "You are looking for '#{@keyword}' in #{ARGV.length} file(s)."
+      puts
     end
 
-    def print_keyword_in_context
-      @index.each do |i|
-        printf '# %*d: ', number_length, i + 1
-        if i < 4
-          printf '%*s', width_text_snippet, @wordlist[0, i].join(' ')
-        else
-          printf '%*s', width_text_snippet, @wordlist[i - 4, 4].join(' ')
-        end
-        # printf '  %s  ', @wordlist[i]
-        print "  #{@wordlist[i]}  "
-        if i + 4 >= @wordlist.length
-          last = @wordlist.length - i
-          printf "%-*s\n", width_text_snippet, @wordlist[i + 1, last].join(' ')
-        else
-          printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
-        end
-      end
+    def print_keyword_in_context(i)
+      printf '%-15.15s # %7d |', File.basename(ARGF.filename), @line_count
+      print_before_keyword(i)
+      print "  #{@wordlist[i]}  "
+      print_after_keyword(i)
     end
 
     def print_summary
       puts
-      puts "The keyword '#{@keyword}' was found #{@index.length} times among #{@wordlist.length} words."
+      puts "The keyword '#{@keyword}' was found #{@number_of_hits} times among #{@word_count} words."
       printf "Its absolute frequency is %.5f.\n", frequency
     end
 
     private
 
-    def frequency
-      @index.length.to_f / @wordlist.length.to_f
-    end
-
-    def split_lines_into_words
-      @wordlist = @lines.flatten
+    def count_lines
+      if @processing_file == ARGF.filename
+        @line_count += 1
+      else
+        @processing_file = ARGF.filename
+        @line_count = 1
+      end
     end
 
     def search_keyword
-      @wordlist.each_index { |i| @index << i if @wordlist[i] =~ /#{@keyword}/i }
-    end
-
-    def number_length
-      @wordlist.length.to_s.length
+      @wordlist.each_index do |i|
+        if @wordlist[i] =~ /#{@keyword}/i
+          print_keyword_in_context(i)
+          @number_of_hits += 1
+        end
+      end
     end
 
     def width_text_snippet
-      (80 - @keyword.length - number_length) / 2
+      (100 - @keyword.length) / 2
+    end
+
+    def print_before_keyword(i)
+      if i < 4
+        printf '%*s', width_text_snippet, @wordlist[0, i].join(' ')
+      else
+        printf '%*s', width_text_snippet, @wordlist[i - 4, 4].join(' ')
+      end
+    end
+
+    def print_after_keyword(i)
+      if i + 4 >= @wordlist.length
+        last = @wordlist.length - i
+        printf "%-*s\n", width_text_snippet, @wordlist[i + 1, last].join(' ')
+      else
+        printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
+      end
+    end
+
+    def frequency
+      @number_of_hits.to_f / @word_count.to_f
     end
   end
 end
 
 ngram = Kwic::Kwic.new(ARGV.shift)
-ngram.read_file
-ngram.process
-ngram.print_keyword_in_context
+ngram.print_start
+ngram.read_stream
 ngram.print_summary
