@@ -30,7 +30,7 @@ module Kwic
     def print_start
       puts "You are looking for '#{@keyword}' in #{ARGV.length} file(s)."
       puts
-      printf "%-15s | %7s:%4s |\n", 'File', 'line', 'word'
+      printf "%-15s | %7s:%4s |\n", 'File', 'Line', 'Word'
       # puts
     end
 
