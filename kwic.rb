@@ -11,22 +11,6 @@ module Kwic
       @number_of_hits = 0
     end
 
-    def read_stream
-      @processing_file = ARGF.filename
-      ARGF.each do |line|
-        count_lines
-        @wordlist << line.split
-        @wordlist.flatten!
-        count_words
-        search_keyword
-        @wordlist.clear
-      end
-    end
-
-    def read_string(text)
-      @lines = text.split
-    end
-
     def print_start
       puts "You are looking for '#{@keyword}' in #{ARGV.length} file(s)."
       puts
@@ -34,11 +18,14 @@ module Kwic
       # puts
     end
 
-    def print_keyword_in_context(i)
-      printf '%-15.15s | %7d:%4d |', File.basename(ARGF.filename), @line_count, i + 1
-      print_before_keyword(i)
-      print "  #{@wordlist[i]}  "
-      print_after_keyword(i)
+    def read_stream
+      @processing_file = ARGF.filename
+      ARGF.each do |line|
+        @wordlist << line.split
+        @wordlist.flatten!
+        process
+        @wordlist.clear
+      end
     end
 
     def print_summary
@@ -48,6 +35,12 @@ module Kwic
     end
 
     private
+
+    def process
+      count_lines
+      count_words
+      search_keyword
+    end
 
     def count_lines
       if @processing_file == ARGF.filename
@@ -71,8 +64,15 @@ module Kwic
       end
     end
 
-    def width_text_snippet
-      (100 - @keyword.length) / 2
+    def print_keyword_in_context(i)
+      printf '%-15.15s | %7d:%4d |', file_name, @line_count, i + 1
+      print_before_keyword(i)
+      print "  #{@wordlist[i]}  "
+      print_after_keyword(i)
+    end
+
+    def file_name
+      File.basename(ARGF.filename)
     end
 
     def print_before_keyword(i)
@@ -90,6 +90,10 @@ module Kwic
       else
         printf "%-*s\n", width_text_snippet, @wordlist[i + 1, 4].join(' ')
       end
+    end
+
+    def width_text_snippet
+      (100 - @keyword.length) / 2
     end
 
     def frequency
