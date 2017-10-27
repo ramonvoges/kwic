@@ -15,16 +15,18 @@ module Kwic
       puts "You are looking for '#{@keyword}' in #{ARGV.length} file(s)."
       puts
       printf "%-15s | %7s:%4s |\n", 'File', 'Line', 'Word'
-      # puts
     end
 
     def read_stream
       @processing_file = ARGF.filename
       ARGF.each do |line|
-        @wordlist << line.split
-        @wordlist.flatten!
-        process
-        @wordlist.clear
+        process(line)
+      end
+    end
+
+    def read_string(text)
+      text.split(/\n/).each do |line|
+        process(line)
       end
     end
 
@@ -36,10 +38,13 @@ module Kwic
 
     private
 
-    def process
+    def process(line)
+      @wordlist << line.split
+      @wordlist.flatten!
       count_lines
       count_words
       search_keyword
+      @wordlist.clear
     end
 
     def count_lines
@@ -106,3 +111,6 @@ ngram = Kwic::Kwic.new(ARGV.shift)
 ngram.print_start
 ngram.read_stream
 ngram.print_summary
+
+test = "Das ist ein Neovim\nString, der\n über mehrere Neovim Zeilen\n geht."
+ngram.read_string(test)
