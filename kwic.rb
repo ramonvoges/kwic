@@ -44,7 +44,7 @@ module Kwic
       count_lines
       count_words
       search_keyword
-      @wordlist.clear
+      # @wordlist.clear
     end
 
     def count_lines
