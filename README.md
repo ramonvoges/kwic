@@ -7,10 +7,11 @@ For example:
 ruby kwic.rb "n.?vim" file1.txt file2.txt
 ```
 
-The resulting output consists of a column with the word number, a column with 4 words coming before the keyword, a middle column with the keyword and a column with 4 words coming after the keyword.
+The resulting output consists of a column with the filename, a second with the line number and word number, a third column with 4 words coming before the keyword, a middle column with the keyword and a column with 4 words coming after the keyword.
 
 ```
-# 5       In front of the  keyword  this comes after it
+File            |    Line:Word |
+test.txt        |       3:   5 |     In front of the  keyword  this comes after it
 ```
 
 # Require 'kwic'
