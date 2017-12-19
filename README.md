@@ -35,7 +35,7 @@ To use the program on its own on the command line, follow these steps:
 1. Download it anywhere in your `$PATH`.
 2. `mv kwic.rb kwic`
 3. `chmod +x kwic`
-4. Run it by `kwic keyword file1 file2 file3` or `echo 'This is a test.' | kwic is –`
+4. Run it by `kwic "keyword" file1 file2 file3` or `echo 'This is a test.' | kwic "is" –`
 
 # Licence
 
