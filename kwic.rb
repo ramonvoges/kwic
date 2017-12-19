@@ -39,8 +39,8 @@ module Kwic
     private
 
     def process(line)
-      @wordlist << line.split
-      @wordlist.flatten!
+      @wordlist = line.split
+      # @wordlist.flatten!
       count_lines
       count_words
       search_keyword
