@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 module Kwic
-  # Returns the 7-gram of a given keyword in the given files.
+  # Returns the context of a given keyword in the given files or stream.
   class Kwic
     def initialize(keyword)
       @keyword ||= keyword
@@ -107,10 +107,10 @@ module Kwic
   end
 end
 
-ngram = Kwic::Kwic.new(ARGV.shift)
-ngram.print_start
-ngram.read_stream
-ngram.print_summary
+concordance = Kwic::Kwic.new(ARGV.shift)
+concordance.print_start
+concordance.read_stream
+concordance.print_summary
 
 # test = "Das ist ein Neovim\nString, der\n über mehrere Neovim Zeilen\n geht."
 # ngram.read_string(test)
