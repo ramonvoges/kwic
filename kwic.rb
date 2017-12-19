@@ -112,5 +112,5 @@ ngram.print_start
 ngram.read_stream
 ngram.print_summary
 
-test = "Das ist ein Neovim\nString, der\n über mehrere Neovim Zeilen\n geht."
-ngram.read_string(test)
+# test = "Das ist ein Neovim\nString, der\n über mehrere Neovim Zeilen\n geht."
+# ngram.read_string(test)
